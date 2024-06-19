@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import Player from "@madzadev/audio-player";
+// import Player from "@madzadev/audio-player";
 import "@madzadev/audio-player/dist/index.css";
 import "../../public/styles.css";
 import { FaSun, FaMoon } from "react-icons/fa";
@@ -228,7 +228,7 @@ const Home = () => {
             </section>
           ))}
 
-        <div className="mt-8">
+        {/* <div className="mt-8">
           <Player
             includeTags={false}
             includeSearch={false}
@@ -244,7 +244,7 @@ const Home = () => {
             ]}
             customColorScheme={colors}
           />
-        </div>
+        </div> */}
 
         <section className="mt-8">
           <h2 className="text-2xl font-bold mb-4">History of Searched Words</h2>
