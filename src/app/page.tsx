@@ -1,113 +1,276 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useState } from "react";
+import Player from "@madzadev/audio-player";
+import "@madzadev/audio-player/dist/index.css";
+import "../../public/styles.css";
+import { FaSun, FaMoon } from "react-icons/fa";
+import Translation from "@/components/Translation";
 
-export default function Home() {
+interface DictionaryEntry {
+  word: string;
+  phonetics: { text: string; audio: string }[];
+  meanings: { partOfSpeech: string; definitions: { definition: string }[] }[];
+  origin: string;
+}
+
+interface BannerProps {
+  changeWord: (word: string) => void;
+}
+
+const Banner = ({ changeWord }: BannerProps) => {
+  const [value, setValue] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (value.trim()) {
+      changeWord(value);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="h-[40vh] flex items-center justify-center">
+      <form className="w-full max-w-lg" onSubmit={handleSubmit}>
+        <label
+          htmlFor="default-search"
+          className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+        >
+          Search
+        </label>
+        <div className="relative flex items-center">
+          <div className="absolute left-4 flex items-center pointer-events-none">
+            <svg
+              className="w-5 h-5 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+              />
+            </svg>
+          </div>
+          <input
+            type="search"
+            id="default-search"
+            className="block w-full py-4 pl-12 pr-4 text-sm text-gray-900 border border-gray-300 rounded-full bg-white shadow-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            placeholder="Search Mockups, Logos..."
+            onChange={(e) => setValue(e.target.value)}
+            required
+          />
+          <button
+            type="submit"
+            className="absolute right-4 text-white bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-full"
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            Search
+          </button>
         </div>
-      </div>
+      </form>
+    </div>
+  );
+};
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+const ThemeToggle = ({ toggleTheme, isDarkMode }: { toggleTheme: () => void; isDarkMode: boolean }) => {
+  return (
+    <button
+      onClick={toggleTheme}
+      className="fixed top-4 right-4 p-2  dark:bg-gray-500  rounded-full shadow-md"
+    >
+      {isDarkMode ? <FaSun className="text-yellow-500" /> : <FaMoon className="text-gray-900" />}
+    </button>
+  );
+};
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
+const colors = {
+  tagsBackground: "#3e32e4",
+  tagsText: "#ffffff",
+  tagsBackgroundHoverActive: "#6e65f1",
+  tagsTextHoverActive: "#ffffff",
+  searchBackground: "#18191f",
+  searchText: "#ffffff",
+  searchPlaceHolder: "#575a77",
+  playerBackground: "#000",
+  titleColor: "#16A343",
+  timeColor: "#16A343",
+  progressSlider: "#16A343",
+  progressUsed: "#16A343",
+  progressLeft: "#16A343",
+  bufferLoaded: "#16A343",
+  volumeSlider: "#3e32e4",
+  volumeUsed: "#ffffff",
+  volumeLeft: "#151616",
+  playlistBackground: "#fff",
+  playlistText: "#575a77",
+  playlistBackgroundHoverActive: "#18191f",
+  playlistTextHoverActive: "#ffffff",
+};
+
+const Home = () => {
+  const [word, setWord] = useState("hello");
+  const [dictionary, setDictionary] = useState<DictionaryEntry[] | null>(null);
+  const [history, setHistory] = useState<string[]>([]);
+  const [wordOfTheDay, setWordOfTheDay] = useState<DictionaryEntry | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const fetchDictionaryData = async () => {
+      try {
+        const response = await fetch(
+          `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+        );
+        const data = await response.json();
+        setDictionary(data);
+        setHistory((prev) => [...new Set([word, ...prev])]); // Add to history, ensuring no duplicates
+        console.log(data);
+      } catch (err) {
+        console.error("Failed to fetch dictionary data:", err);
+      }
+    };
+
+    fetchDictionaryData();
+  }, [word]);
+
+  useEffect(() => {
+    const fetchWordOfTheDay = async () => {
+      try {
+        const response = await fetch(
+          `https://api.dictionaryapi.dev/api/v2/entries/en/serendipity` // Replace with actual word of the day endpoint if available
+        );
+        const data = await response.json();
+        setWordOfTheDay(data[0]);
+      } catch (err) {
+        console.error("Failed to fetch word of the day:", err);
+      }
+    };
+
+    fetchWordOfTheDay();
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDarkMode((prev) => !prev);
+    if (isDarkMode) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  };
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme === 'dark') {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  return (
+    <main className={`min-h-screen ${isDarkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'} top` }>
+      <ThemeToggle toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+      <Banner changeWord={setWord} />
+      <section className="relative top-[-15vh] w-[90%] mx-auto shadow-xl p-8 rounded-3xl">
+        <div className="flex justify-between items-center mb-8">
+          <span className="px-6 py-2 rounded-full bg-green-600 text-white text-lg shadow-md">
+            <span className="h-[10px] w-[10px] bg-yellow-300 rounded-full inline-block mr-2"></span>
+            {word}
+          </span>
+          <h1 className="text-3xl font-extrabold">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500">
+              FIND IN
+            </span>{" "}
+            DICTIONARY
+          </h1>
+          {dictionary?.length && (
+            <span className="px-6 py-2 rounded-full bg-blue-600 text-white text-lg shadow-md">
+              <span className="h-[10px] w-[10px] bg-blue-300 rounded-full inline-block mr-2"></span>
+              {`Phonetic: ${dictionary[0]?.phonetics[1]?.text}`}
             </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+          )}
+        </div>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
+        <section className="mb-8">
+          <span className="px-6 py-2 rounded-full bg-green-600 text-white font-semibold shadow-md inline-block">
+            <span className="h-[10px] w-[10px] bg-yellow-300 rounded-full inline-block mr-2"></span>
+            Origin
+          </span>
+          <p className="py-4 mt-4 px-6 rounded-lg shadow-md">
+            {dictionary?.[0]?.origin || "Origin information not available."}
           </p>
-        </a>
+        </section>
+        <Translation word={word} isDarkMode={isDarkMode} />
+        {dictionary?.length &&
+          dictionary[0]?.meanings.map((meaning, index) => (
+            <section key={index} className="mb-8 p-6 rounded-3xl shadow-xl">
+              <span className="px-6 py-3 rounded-full bg-gray-600 text-white font-semibold shadow-md inline-block mb-4">
+                <span className="h-[10px] w-[10px] bg-white rounded-full inline-block mr-2"></span>
+                Meaning
+              </span>
+              <div>
+                <span className="px-3 py-2 rounded-full bg-white text-green-700 font-semibold shadow-sm inline-block mb-4">
+                  <span className="h-[10px] w-[10px] bg-yellow-300 rounded-full inline-block mr-2"></span>
+                  Part of Speech
+                  <span className="px-6 py-2 ml-4 rounded-full bg-green-600 text-white font-semibold shadow-md">
+                    {meaning.partOfSpeech}
+                  </span>
+                </span>
+                {meaning.definitions.map((definition, i) => (
+                  <p key={i} className="py-3 mt-4 px-6 rounded-lg shadow-md">
+                    {definition.definition}
+                  </p>
+                ))}
+              </div>
+            </section>
+          ))}
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+        <div className="mt-8">
+          <Player
+            includeTags={false}
+            includeSearch={false}
+            showPlaylist={false}
+            sortTracks={false}
+            autoPlayNextTrack={false}
+            trackList={[
+              {
+                url: dictionary?.[0]?.phonetics[0]?.audio || "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
+                title: word,
+                tags: [word],
+              },
+            ]}
+            customColorScheme={colors}
+          />
+        </div>
+
+        <section className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">History of Searched Words</h2>
+          <ul className="list-disc pl-5">
+            {history.map((word, index) => (
+              <li key={index}>
+                {word}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Word of the Day</h2>
+          {wordOfTheDay && (
+            <div className="p-6 rounded-3xl shadow-xl">
+              <h3 className="text-xl font-semibold">{wordOfTheDay.word}</h3>
+              <p>
+                {wordOfTheDay.meanings[0]?.definitions[0]?.definition}
+              </p>
+            </div>
+          )}
+        </section>
+      </section>
     </main>
   );
-}
+};
+
+export default Home;
